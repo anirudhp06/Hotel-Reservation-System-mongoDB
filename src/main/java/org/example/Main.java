@@ -16,11 +16,18 @@ public class Main {
             MongoCollection<Document> collection = database.getCollection("HelloWorld");
             clearScreen();
             System.out.println("Selected Collection 'HelloWorld'");
-            Document doc=collection.find(eq("name", "Anirudh")).first();
+            Document doc=collection.find(eq("name", "Uday")).first();
             //System.out.println(doc.toJson());
             JSONObject obj=new JSONObject(doc.toJson());
             System.out.println("ID of the document is:"+obj.get("_id"));
             System.out.println("Name of the document is:"+obj.get("name"));
+            //Inserting into Collection
+            doc = new Document();
+            doc.append("menuName", "Fiery Mexican Appetizers")
+            .append("menuId", "m01")
+            .append("lang", "English")
+            .append("ethnicity", "Mexican");
+            database.getCollection("HelloWorld").insertOne(doc);
         }
     }
 }
