@@ -38,21 +38,10 @@ public class Main {
             clearScreen();
             System.out.println("Loaded Env file");
             System.out.println("Selected Collection 'HelloWorld'");
-            Document doc=collection.find(eq("name", "Uday")).first();
-            //System.out.println(doc.toJson());
-            JSONObject obj=new JSONObject(doc.toJson());
-            System.out.println(obj.length()-1);
+            MongoCursor<Document> doc=collection.find().iterator();
             List<String> cols=new ArrayList<String>();
             List<String> rowData=new ArrayList<String>();
-            for(String keyStr:obj.keySet()){
-                if(keyStr.equals("_id")){continue;}//Ignores the _id value
-                Object keyVal=obj.get(keyStr);
-                cols.add(keyStr);
-                rowData.add((String)keyVal);
-                System.out.println(keyStr+":"+keyVal);
-            }
-            System.out.println("Number of columns in this database are(_id ignored):");
-            System.out.println(cols);
+
             final JFrame frame;
             JTabbedPane myListTabs = null;
             frame = new JFrame("Pending Bookings");
@@ -63,9 +52,23 @@ public class Main {
             myComicsTable.setPreferredScrollableViewportSize(new Dimension(750, 110));
             myComicsTable.setFillsViewportHeight(true);
             myComicsTable.setFillsViewportHeight(true);
-            model.setColumnIdentifiers(cols.toArray());
-            //String[] row={"Hello","HI"};
-            model.addRow(rowData.toArray());
+
+            JSONObject obj;
+            while(doc.hasNext()){
+                obj=new JSONObject(doc.next().toJson());
+                //System.out.println(doc.next().toJson());
+                for(String keyStr:obj.keySet()){
+                    if(keyStr.equals("_id")){continue;}//Ignores the _id value
+                    Object keyVal=obj.get(keyStr);
+                    cols.add(keyStr);
+                    rowData.add((String)keyVal);
+                    System.out.println(keyStr+":"+keyVal);
+                }
+                model.setColumnIdentifiers(cols.toArray());
+                model.addRow(rowData.toArray());
+                rowData.clear();
+                cols.clear();
+            }
             myComicsTable.setDefaultEditor(Object.class, null);
             JScrollPane scrollPane = new JScrollPane(myComicsTable);
             scrollPane.setPreferredSize(new Dimension(600, 110));
