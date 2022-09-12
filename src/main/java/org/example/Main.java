@@ -1,5 +1,7 @@
 package org.example;
 import static com.mongodb.client.model.Filters.eq;
+import java.util.ArrayList;
+import java.util.List;
 import org.bson.Document;
 import org.bson.*;
 import org.json.*;
@@ -30,17 +32,16 @@ public class Main {
             Document doc=collection.find(eq("name", "Uday")).first();
             //System.out.println(doc.toJson());
             JSONObject obj=new JSONObject(doc.toJson());
-            System.out.println("ID of the document is:"+obj.get("_id"));
-            System.out.println("Name of the document is:"+obj.get("name"));
-            //Inserting into Collection
-            doc = new Document();
-            doc.append("menuName", "Fiery Mexican Appetizers")
-            .append("menuId", "m01")
-            .append("lang", "English")
-            .append("ethnicity", "Mexican");
-            database.getCollection("HelloWorld").insertOne(doc);
-            System.out.println("Added into Collection");
-            System.out.println(env.get("TOKEN"));
+            System.out.println(obj.length()-1);
+            List<String> cols=new ArrayList<String>();
+            for(String keyStr:obj.keySet()){
+                if(keyStr.equals("_id")){continue;}//Ignores the _id value
+                Object keyVal=obj.get(keyStr);
+                cols.add(keyStr);
+                System.out.println(keyStr+":"+keyVal);
+            }
+            System.out.println("Number of columns in this database are(_id ignored):");
+            System.out.println(cols);
         }
     }
 }
